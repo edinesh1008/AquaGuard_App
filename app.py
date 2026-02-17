@@ -1,145 +1,110 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from datetime import datetime
 
 # -----------------------------
 # PAGE CONFIG
 # -----------------------------
-st.set_page_config(
-    page_title="AquaGuard Lite",
-    layout="wide"
-)
-
+st.set_page_config(page_title="AquaGuard", layout="wide")
 st.title("💧 AquaGuard – Water Risk Monitoring")
 
 # -----------------------------
-# INIT DATA
+# LOAD YOUR FILE
 # -----------------------------
-if "data" not in st.session_state:
-    st.session_state.data = pd.DataFrame(columns=[
-        "Village", "Ecoli", "Turbidity",
-        "Latitude", "Longitude", "Date", "Risk"
-    ])
+@st.cache_data
+def load_data():
+    df = pd.read_csv("india_water_data.csv")
+    return df
+
+try:
+    data = load_data()
+except Exception as e:
+    st.error(f"❌ File not found or error: {e}")
+    st.stop()
 
 # -----------------------------
-# RISK PREDICTION
+# STANDARDIZE RISK (COLOR)
 # -----------------------------
-def predict_risk(ecoli, turbidity):
-    if ecoli == "High":
-        return "High Risk 🔴", "red"
-    elif ecoli == "Medium" or turbidity > 5:
-        return "Medium Risk 🟡", "yellow"
+def normalize_risk(x):
+    x = str(x).upper()
+    if "HIGH" in x:
+        return "High Risk 🔴"
+    elif "WARN" in x:
+        return "Medium Risk 🟡"
     else:
-        return "Low Risk 🟢", "green"
+        return "Low Risk 🟢"
+
+data["Risk"] = data["Risk_Level"].apply(normalize_risk)
 
 # -----------------------------
-# SIDEBAR INPUT
+# METRICS
 # -----------------------------
-st.sidebar.header("📝 Enter Water Data")
+st.header("📊 Overview")
 
-village = st.sidebar.text_input("Village Name")
-ecoli = st.sidebar.selectbox("E. coli Level", ["Low", "Medium", "High"])
-turbidity = st.sidebar.number_input("Turbidity (NTU)", min_value=0.0)
-lat = st.sidebar.number_input("Latitude", value=12.9716)
-lon = st.sidebar.number_input("Longitude", value=77.5946)
-date = st.sidebar.date_input("Date", datetime.today())
+c1, c2, c3 = st.columns(3)
+c1.metric("Total Records", len(data))
+c2.metric("High Risk", (data["Risk"].str.contains("High")).sum())
+c3.metric("Safe", (data["Risk"].str.contains("Low")).sum())
 
-# -----------------------------
-# SUBMIT
-# -----------------------------
-if st.sidebar.button("Predict & Add"):
+# =============================
+# 🗺️ MAP
+# =============================
+st.header("🗺️ Risk Map")
 
-    if village.strip() == "":
-        st.sidebar.error("Enter village name")
-    else:
-        risk_label, risk_color = predict_risk(ecoli, turbidity)
+map_df = data.rename(columns={
+    "Latitude": "lat",
+    "Longitude": "lon"
+})
 
-        new_row = pd.DataFrame([{
-            "Village": village,
-            "Ecoli": ecoli,
-            "Turbidity": turbidity,
-            "Latitude": lat,
-            "Longitude": lon,
-            "Date": date,
-            "Risk": risk_label,
-            "Color": risk_color
-        }])
+st.map(map_df[["lat", "lon"]])
 
-        st.session_state.data = pd.concat(
-            [st.session_state.data, new_row],
-            ignore_index=True
-        )
+# =============================
+# 🎯 COLORED MAP
+# =============================
+st.header("🎯 Risk Visualization")
 
-        st.sidebar.success(f"Prediction: {risk_label}")
+fig_map = px.scatter_mapbox(
+    data,
+    lat="Latitude",
+    lon="Longitude",
+    color="Risk",
+    hover_name="Village",
+    zoom=3,
+    height=550,
+    color_discrete_map={
+        "Low Risk 🟢": "green",
+        "Medium Risk 🟡": "yellow",
+        "High Risk 🔴": "red"
+    }
+)
 
-# -----------------------------
-# MAIN DASHBOARD
-# -----------------------------
-data = st.session_state.data
+fig_map.update_layout(mapbox_style="open-street-map")
+st.plotly_chart(fig_map, use_container_width=True)
 
-if not data.empty:
+# =============================
+# 📊 BAR GRAPH
+# =============================
+st.header("📊 Risk Distribution")
 
-    st.header("🗺️ Risk Map")
+risk_counts = data["Risk"].value_counts().reset_index()
+risk_counts.columns = ["Risk", "Count"]
 
-    # rename for streamlit map safety
-    map_data = data.rename(columns={
-        "Latitude": "lat",
-        "Longitude": "lon"
-    })
+fig_bar = px.bar(
+    risk_counts,
+    x="Risk",
+    y="Count",
+    color="Risk",
+    color_discrete_map={
+        "Low Risk 🟢": "green",
+        "Medium Risk 🟡": "yellow",
+        "High Risk 🔴": "red"
+    }
+)
 
-    st.map(map_data[["lat", "lon"]])
+st.plotly_chart(fig_bar, use_container_width=True)
 
-    # -----------------------------
-    # COLORED SCATTER MAP (BETTER)
-    # -----------------------------
-    st.header("🎯 Risk Visualization")
-
-    fig = px.scatter_mapbox(
-        data,
-        lat="Latitude",
-        lon="Longitude",
-        color="Risk",
-        hover_name="Village",
-        zoom=4,
-        height=500,
-        color_discrete_map={
-            "Low Risk 🟢": "green",
-            "Medium Risk 🟡": "yellow",
-            "High Risk 🔴": "red"
-        }
-    )
-
-    fig.update_layout(mapbox_style="open-street-map")
-    st.plotly_chart(fig, use_container_width=True)
-
-    # -----------------------------
-    # BAR GRAPH
-    # -----------------------------
-    st.header("📊 Risk Distribution")
-
-    risk_counts = data["Risk"].value_counts().reset_index()
-    risk_counts.columns = ["Risk", "Count"]
-
-    fig2 = px.bar(
-        risk_counts,
-        x="Risk",
-        y="Count",
-        color="Risk",
-        color_discrete_map={
-            "Low Risk 🟢": "green",
-            "Medium Risk 🟡": "yellow",
-            "High Risk 🔴": "red"
-        }
-    )
-
-    st.plotly_chart(fig2, use_container_width=True)
-
-    # -----------------------------
-    # TABLE
-    # -----------------------------
-    st.header("📋 Data Table")
-    st.dataframe(data, use_container_width=True)
-
-else:
-    st.info("Enter water data from sidebar to begin.")
+# =============================
+# 📋 TABLE
+# =============================
+st.header("📋 Data Table")
+st.dataframe(data, use_container_width=True)
