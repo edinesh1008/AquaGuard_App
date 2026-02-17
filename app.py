@@ -1,108 +1,127 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 
-# -----------------------------
-# Page Config
-# -----------------------------
+# ==============================
+# PAGE CONFIG
+# ==============================
 st.set_page_config(
-    page_title="AquaGuard – Early Warning System",
+    page_title="AquaGuard AI",
     page_icon="💧",
     layout="wide"
 )
 
-# -----------------------------
-# Title
-# -----------------------------
-st.title("💧 AquaGuard – Smart Water Risk Monitor")
-st.markdown("### Community Water Quality Early Warning System")
-
-# -----------------------------
-# Sidebar Inputs
-# -----------------------------
-st.sidebar.header("📊 Enter Water Test Data")
-
-village = st.sidebar.text_input("Village Name")
-
-ecoli = st.sidebar.selectbox(
-    "E. coli Level",
-    ["Low", "Medium", "High"]
-)
-
-turbidity = st.sidebar.slider(
-    "Turbidity (NTU)",
-    0, 50, 5
-)
-
-temperature = st.sidebar.slider(
-    "Temperature (°C)",
-    0, 50, 25
-)
-
-# -----------------------------
-# Risk Logic Function
-# -----------------------------
-def calculate_risk(ecoli, turbidity):
-    if ecoli == "High" or turbidity > 25:
-        return "HIGH RISK"
-    elif ecoli == "Medium" or turbidity > 10:
-        return "WARNING"
-    else:
-        return "SAFE"
-
-risk = calculate_risk(ecoli, turbidity)
-
-# -----------------------------
-# Display Result
-# -----------------------------
-st.header("🚨 Risk Assessment Result")
-
-if risk == "SAFE":
-    st.success("🟢 SAFE – Water is Suitable for Use")
-
-elif risk == "WARNING":
-    st.warning("🟡 WARNING – Water Needs Treatment")
-
-else:
-    st.error("🔴 HIGH RISK – Immediate Action Required")
-
-# -----------------------------
-# Recommendations
-# -----------------------------
-st.subheader("📌 Recommended Action")
-
-if risk == "SAFE":
-    st.write("✔ Continue regular monitoring")
-    st.write("✔ Maintain sanitation practices")
-
-elif risk == "WARNING":
-    st.write("⚠ Boil water before drinking")
-    st.write("⚠ Consider chlorination")
-
-else:
-    st.write("🚨 Avoid using this water source")
-    st.write("🚨 Notify health authorities immediately")
-
-# -----------------------------
-# Village Info Display
-# -----------------------------
-if village:
-    st.info(f"📍 Monitoring Location: **{village}**")
-
-# -----------------------------
-# Weekly Trend Chart (Demo)
-# -----------------------------
-st.subheader("📈 Weekly Risk Trend")
-
-data = {
-    "Day": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    "Risk Score": [1, 1, 2, 2, 3, 2, 1]
+# ==============================
+# CUSTOM CSS (Premium UI)
+# ==============================
+st.markdown("""
+<style>
+.main-title {
+    font-size: 42px;
+    font-weight: bold;
+    color: #00B4D8;
 }
+.metric-card {
+    background-color: #0f172a;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+}
+</style>
+""", unsafe_allow_html=True)
 
-df = pd.DataFrame(data)
-st.line_chart(df.set_index("Day"))
+st.markdown('<p class="main-title">💧 AquaGuard AI – India Water Risk Intelligence</p>', unsafe_allow_html=True)
 
-# -----------------------------
-# Footer
-# -----------------------------
+# ==============================
+# LOAD DATA
+# ==============================
+@st.cache_data
+def load_data():
+    return pd.read_csv("india_water_data.csv")
+
+df = load_data()
+
+# ==============================
+# AI RISK SCORE FUNCTION
+# ==============================
+def ai_risk_score(row):
+    score = 0
+
+    if row["Ecoli_Level"] == "High":
+        score += 60
+    elif row["Ecoli_Level"] == "Medium":
+        score += 30
+
+    score += min(row["Turbidity_NTU"], 40)
+
+    return min(score, 100)
+
+df["AI_Risk_%"] = df.apply(ai_risk_score, axis=1)
+
+# ==============================
+# SIDEBAR FILTER
+# ==============================
+st.sidebar.header("🔍 Filter Panel")
+
+risk_filter = st.sidebar.selectbox(
+    "Select Risk Level",
+    ["ALL", "SAFE", "WARNING", "HIGH RISK"]
+)
+
+if risk_filter != "ALL":
+    df_filtered = df[df["Risk_Level"] == risk_filter]
+else:
+    df_filtered = df
+
+# ==============================
+# METRICS DASHBOARD
+# ==============================
+safe_count = (df["Risk_Level"]=="SAFE").sum()
+warn_count = (df["Risk_Level"]=="WARNING").sum()
+high_count = (df["Risk_Level"]=="HIGH RISK").sum()
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric("🟢 Safe Zones", safe_count)
+col2.metric("🟡 Warning Zones", warn_count)
+col3.metric("🔴 High Risk Zones", high_count)
+
+# ==============================
+# HEATMAP MAP
+# ==============================
+st.subheader("🗺️ India Risk Heatmap")
+
+st.map(df_filtered[["Latitude","Longitude"]])
+
+# ==============================
+# AI RISK DISTRIBUTION
+# ==============================
+st.subheader("🤖 AI Risk Score Distribution")
+
+st.progress(int(df["AI_Risk_%"].mean()))
+
+st.write(f"### Average AI Risk: {df['AI_Risk_%'].mean():.2f}%")
+
+# ==============================
+# DATA TABLE
+# ==============================
+st.subheader("📋 Detailed Monitoring Data")
+
+st.dataframe(df_filtered, use_container_width=True)
+
+# ==============================
+# DOWNLOAD BUTTON
+# ==============================
+st.download_button(
+    "⬇️ Download Full Dataset",
+    df.to_csv(index=False),
+    file_name="india_water_data.csv",
+    mime="text/csv"
+)
+
+# ==============================
+# FOOTER
+# ==============================
 st.markdown("---")
-st.caption("AquaGuard © 2026 | Makeathon Finalist Project")
+st.caption("🚀 AquaGuard AI | Makeathon Finals Project | Team Aqua Titans")
