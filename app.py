@@ -1,127 +1,214 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
+import matplotlib.pyplot as plt
+import plotly.express as px
+from sklearn.ensemble import RandomForestClassifier
+from datetime import datetime
 
-# ==============================
-# PAGE CONFIG
-# ==============================
+# ----------------------------------
+# Page Config (Mobile Friendly)
+# ----------------------------------
 st.set_page_config(
-    page_title="AquaGuard AI",
-    page_icon="💧",
-    layout="wide"
+    page_title="Smart Water Monitoring",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# ==============================
-# CUSTOM CSS (Premium UI)
-# ==============================
-st.markdown("""
-<style>
-.main-title {
-    font-size: 42px;
-    font-weight: bold;
-    color: #00B4D8;
-}
-.metric-card {
-    background-color: #0f172a;
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    color: white;
-}
-</style>
-""", unsafe_allow_html=True)
+# ----------------------------------
+# Simple Login System
+# ----------------------------------
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
 
-st.markdown('<p class="main-title">💧 AquaGuard AI – India Water Risk Intelligence</p>', unsafe_allow_html=True)
+def login():
+    st.title("🔐 Water Monitoring Login")
 
-# ==============================
-# LOAD DATA
-# ==============================
-@st.cache_data
-def load_data():
-    return pd.read_csv("india_water_data.csv")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
 
-df = load_data()
+    if st.button("Login"):
+        if username == "admin" and password == "1234":
+            st.session_state.logged_in = True
+            st.success("Login successful")
+            st.rerun()
+        else:
+            st.error("Invalid credentials")
 
-# ==============================
-# AI RISK SCORE FUNCTION
-# ==============================
-def ai_risk_score(row):
-    score = 0
+if not st.session_state.logged_in:
+    login()
+    st.stop()
 
-    if row["Ecoli_Level"] == "High":
-        score += 60
-    elif row["Ecoli_Level"] == "Medium":
-        score += 30
+# ----------------------------------
+# Title
+# ----------------------------------
+st.title("💧 Smart Community Water Health Monitoring")
 
-    score += min(row["Turbidity_NTU"], 40)
+# ----------------------------------
+# Initialize Data
+# ----------------------------------
+if "data" not in st.session_state:
+    st.session_state.data = pd.DataFrame(columns=[
+        "Village", "Ecoli", "Turbidity", "Temperature",
+        "Latitude", "Longitude", "Date", "Risk"
+    ])
 
-    return min(score, 100)
+# ----------------------------------
+# ML Model (Simple Training)
+# ----------------------------------
+def train_model(df):
+    if len(df) < 5:
+        return None
 
-df["AI_Risk_%"] = df.apply(ai_risk_score, axis=1)
+    temp = df.copy()
+    temp["Ecoli_num"] = temp["Ecoli"].map({"Low":0,"Medium":1,"High":2})
+    temp["Risk_num"] = temp["Risk"].map({
+        "Low Risk 🟢":0,
+        "Medium Risk 🟠":1,
+        "High Risk 🔴":2
+    })
 
-# ==============================
-# SIDEBAR FILTER
-# ==============================
-st.sidebar.header("🔍 Filter Panel")
+    X = temp[["Ecoli_num", "Turbidity", "Temperature"]]
+    y = temp["Risk_num"]
 
-risk_filter = st.sidebar.selectbox(
-    "Select Risk Level",
-    ["ALL", "SAFE", "WARNING", "HIGH RISK"]
-)
+    model = RandomForestClassifier()
+    model.fit(X, y)
+    return model
 
-if risk_filter != "ALL":
-    df_filtered = df[df["Risk_Level"] == risk_filter]
+# ----------------------------------
+# Sidebar — Data Entry
+# ----------------------------------
+st.sidebar.header("📝 Enter Water Data")
+
+village = st.sidebar.text_input("Village Name")
+ecoli = st.sidebar.selectbox("E. coli", ["Low","Medium","High"])
+turbidity = st.sidebar.number_input("Turbidity", min_value=0.0)
+temperature = st.sidebar.number_input("Temperature", min_value=0.0)
+lat = st.sidebar.number_input("Latitude", value=12.97)
+lon = st.sidebar.number_input("Longitude", value=77.59)
+date = st.sidebar.date_input("Date", datetime.today())
+
+# ----------------------------------
+# Basic Rule Risk
+# ----------------------------------
+def rule_risk(ecoli, turbidity):
+    if ecoli == "High":
+        return "High Risk 🔴"
+    elif ecoli == "Medium" or turbidity > 5:
+        return "Medium Risk 🟠"
+    else:
+        return "Low Risk 🟢"
+
+# ----------------------------------
+# Submit Data
+# ----------------------------------
+if st.sidebar.button("Submit Data"):
+    if village:
+        risk = rule_risk(ecoli, turbidity)
+
+        new_row = pd.DataFrame([{
+            "Village": village,
+            "Ecoli": ecoli,
+            "Turbidity": turbidity,
+            "Temperature": temperature,
+            "Latitude": lat,
+            "Longitude": lon,
+            "Date": date,
+            "Risk": risk
+        }])
+
+        st.session_state.data = pd.concat(
+            [st.session_state.data, new_row],
+            ignore_index=True
+        )
+
+        st.sidebar.success("✅ Data Added")
+
+# ----------------------------------
+# CSV Upload
+# ----------------------------------
+st.sidebar.header("📂 Upload CSV")
+
+uploaded_file = st.sidebar.file_uploader("Upload water data CSV")
+
+if uploaded_file:
+    csv_data = pd.read_csv(uploaded_file)
+    st.session_state.data = pd.concat(
+        [st.session_state.data, csv_data],
+        ignore_index=True
+    )
+    st.sidebar.success("CSV Uploaded")
+
+# ----------------------------------
+# Dashboard
+# ----------------------------------
+data = st.session_state.data
+
+st.header("📊 Live Dashboard")
+
+if not data.empty:
+
+    # Metrics
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Total Records", len(data))
+    c2.metric("High Risk", (data["Risk"].str.contains("High")).sum())
+    c3.metric("Safe", (data["Risk"].str.contains("Low")).sum())
+
+    st.divider()
+
+    # Table
+    st.subheader("📍 Village Table")
+    st.dataframe(data, use_container_width=True)
+
+    # ----------------------------------
+    # Heatmap
+    # ----------------------------------
+    st.subheader("🗺️ Risk Heatmap")
+
+    map_data = data[["Latitude","Longitude"]].dropna()
+
+    if not map_data.empty:
+        st.map(map_data)
+
+    # ----------------------------------
+    # Pie Chart
+    # ----------------------------------
+    st.subheader("🥧 Risk Distribution")
+    fig = px.pie(data, names="Risk")
+    st.plotly_chart(fig, use_container_width=True)
+
+    # ----------------------------------
+    # Train ML
+    # ----------------------------------
+    model = train_model(data)
+
+    st.subheader("🤖 ML Prediction")
+
+    ecoli_num = {"Low":0,"Medium":1,"High":2}[ecoli]
+
+    if model:
+        pred = model.predict([[ecoli_num, turbidity, temperature]])[0]
+        risk_label = ["Low Risk 🟢","Medium Risk 🟠","High Risk 🔴"][pred]
+        st.info(f"Predicted Risk: {risk_label}")
+    else:
+        st.warning("Need more data to train ML model")
+
+    # ----------------------------------
+    # Government Report
+    # ----------------------------------
+    st.subheader("📄 Government Report")
+
+    if st.button("Generate Report"):
+        summary = data["Risk"].value_counts()
+        st.write("### Risk Summary")
+        st.write(summary)
+
+        csv = data.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            "⬇️ Download Full Report",
+            csv,
+            "water_quality_report.csv",
+            "text/csv"
+        )
+
 else:
-    df_filtered = df
-
-# ==============================
-# METRICS DASHBOARD
-# ==============================
-safe_count = (df["Risk_Level"]=="SAFE").sum()
-warn_count = (df["Risk_Level"]=="WARNING").sum()
-high_count = (df["Risk_Level"]=="HIGH RISK").sum()
-
-col1, col2, col3 = st.columns(3)
-
-col1.metric("🟢 Safe Zones", safe_count)
-col2.metric("🟡 Warning Zones", warn_count)
-col3.metric("🔴 High Risk Zones", high_count)
-
-# ==============================
-# HEATMAP MAP
-# ==============================
-st.subheader("🗺️ India Risk Heatmap")
-
-st.map(df_filtered[["Latitude","Longitude"]])
-
-# ==============================
-# AI RISK DISTRIBUTION
-# ==============================
-st.subheader("🤖 AI Risk Score Distribution")
-
-st.progress(int(df["AI_Risk_%"].mean()))
-
-st.write(f"### Average AI Risk: {df['AI_Risk_%'].mean():.2f}%")
-
-# ==============================
-# DATA TABLE
-# ==============================
-st.subheader("📋 Detailed Monitoring Data")
-
-st.dataframe(df_filtered, use_container_width=True)
-
-# ==============================
-# DOWNLOAD BUTTON
-# ==============================
-st.download_button(
-    "⬇️ Download Full Dataset",
-    df.to_csv(index=False),
-    file_name="india_water_data.csv",
-    mime="text/csv"
-)
-
-# ==============================
-# FOOTER
-# ==============================
-st.markdown("---")
-st.caption("🚀 AquaGuard AI | Makeathon Finals Project | Team Aqua Titans")
+    st.info("Enter or upload data to begin.")
