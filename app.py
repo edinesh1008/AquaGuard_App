@@ -9,11 +9,11 @@ st.set_page_config(page_title="AquaGuard", layout="wide")
 st.title("💧 AquaGuard – Water Risk Monitoring")
 
 # -----------------------------
-# LOAD YOUR FILE
+# LOAD DATA (UPDATED FILE NAME)
 # -----------------------------
 @st.cache_data
 def load_data():
-    df = pd.read_csv("india_water_data.csv")
+    df = pd.read_csv("aquaguard_balanced_india_dataset.csv")
     return df
 
 try:
@@ -23,18 +23,11 @@ except Exception as e:
     st.stop()
 
 # -----------------------------
-# STANDARDIZE RISK (COLOR)
+# ENSURE RISK COLUMN EXISTS
 # -----------------------------
-def normalize_risk(x):
-    x = str(x).upper()
-    if "HIGH" in x:
-        return "High Risk 🔴"
-    elif "WARN" in x:
-        return "Medium Risk 🟡"
-    else:
-        return "Low Risk 🟢"
-
-data["Risk"] = data["Risk_Level"].apply(normalize_risk)
+if "Risk" not in data.columns:
+    st.error("❌ 'Risk' column missing in dataset")
+    st.stop()
 
 # -----------------------------
 # METRICS
@@ -82,11 +75,15 @@ fig_map.update_layout(mapbox_style="open-street-map")
 st.plotly_chart(fig_map, use_container_width=True)
 
 # =============================
-# 📊 BAR GRAPH
+# 📊 BAR GRAPH (ROBUST)
 # =============================
 st.header("📊 Risk Distribution")
 
-risk_counts = data["Risk"].value_counts().reset_index()
+risk_counts = data["Risk"].value_counts()
+
+# ensure all categories always appear
+all_risks = ["Low Risk 🟢", "Medium Risk 🟡", "High Risk 🔴"]
+risk_counts = risk_counts.reindex(all_risks, fill_value=0).reset_index()
 risk_counts.columns = ["Risk", "Count"]
 
 fig_bar = px.bar(
