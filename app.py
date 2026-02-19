@@ -11,33 +11,37 @@ st.set_page_config(page_title="AquaGuard Final", layout="wide")
 st.title("💧 AquaGuard – Smart Water Risk & Outbreak Monitoring")
 
 # =====================================================
-# LOAD DATA
+# LOAD DATA (UPDATED FILE NAME)
 # =====================================================
 @st.cache_data
 def load_data():
-    return pd.read_csv("aquaguard_balanced_india_dataset.csv")
+    return pd.read_csv("aquaguard_northeast_final_dataset.csv")
 
 if "data" not in st.session_state:
     try:
         st.session_state.data = load_data()
-    except:
-        st.session_state.data = pd.DataFrame()
+    except Exception as e:
+        st.error(f"❌ Data load error: {e}")
+        st.stop()
 
 data = st.session_state.data.copy()
 
 # =====================================================
-# 🌏 FORCE NORTHEAST LOCATIONS (as requested)
+# ✅ VERIFY REQUIRED COLUMNS (judge safety)
 # =====================================================
-northeast_states = [
-    "Assam","Arunachal Pradesh","Meghalaya","Manipur",
-    "Mizoram","Nagaland","Tripura","Sikkim"
-]
+required_cols = {
+    "Village","State","Latitude","Longitude",
+    "Risk","pH","Temperature","Salinity",
+    "Alkalinity","Dissolved O2","Bacterial contamination"
+}
 
-np.random.seed(7)
-data["State"] = np.random.choice(northeast_states, len(data))
+missing = required_cols - set(data.columns)
+if missing:
+    st.error(f"❌ Dataset missing columns: {missing}")
+    st.stop()
 
 # =====================================================
-# 1️⃣ DASHBOARD — RISK SELECTION FILTER
+# 🎛️ SIDEBAR FILTERS
 # =====================================================
 st.sidebar.header("🎛️ Dashboard Filters")
 
@@ -46,13 +50,22 @@ risk_option = st.sidebar.selectbox(
     ["All", "High Risk 🔴", "Medium Risk 🟡", "Low Risk 🟢"]
 )
 
+state_option = st.sidebar.selectbox(
+    "Select Northeast State",
+    ["All"] + sorted(data["State"].unique().tolist())
+)
+
+# Apply filters
+data_view = data.copy()
+
 if risk_option != "All":
-    data_view = data[data["Risk"] == risk_option]
-else:
-    data_view = data
+    data_view = data_view[data_view["Risk"] == risk_option]
+
+if state_option != "All":
+    data_view = data_view[data_view["State"] == state_option]
 
 # =====================================================
-# RISK CATEGORY METRICS
+# 📊 RISK DASHBOARD
 # =====================================================
 st.header("📊 Risk Categories Dashboard")
 
@@ -66,7 +79,7 @@ c2.metric("🟡 Medium Risk", med)
 c3.metric("🟢 Safe", low)
 
 # =====================================================
-# 2️⃣ OUTBREAK PROBABILITY GRAPH
+# 📈 OUTBREAK PROBABILITY
 # =====================================================
 def outbreak_probability(df):
     score_map = {
@@ -98,32 +111,23 @@ fig_prob = px.line(sim_df, x="Day", y="Outbreak Risk %",
 st.plotly_chart(fig_prob, use_container_width=True)
 
 # =====================================================
-# 3️⃣ RISK VISUALIZATION + LOCATION CHANGE
+# 🗺️ RISK VISUALIZATION
 # =====================================================
 st.header("🗺️ Risk Visualization")
 
-selected_state = st.selectbox(
-    "📍 Change Location (Northeast)",
-    ["All Northeast"] + northeast_states
-)
-
-if selected_state != "All Northeast":
-    map_view = data_view[data_view["State"] == selected_state]
-else:
-    map_view = data_view
-
-if not map_view.empty:
-    map_df = map_view.rename(columns={"Latitude": "lat", "Longitude": "lon"})
+if not data_view.empty:
+    map_df = data_view.rename(columns={"Latitude": "lat", "Longitude": "lon"})
     st.map(map_df[["lat", "lon"]])
 
     fig_map = px.scatter_mapbox(
-        map_view,
+        data_view,
         lat="Latitude",
         lon="Longitude",
         color="Risk",
         hover_name="Village",
-        zoom=4,
-        height=500,
+        hover_data=["State"],
+        zoom=5,
+        height=520,
         color_discrete_map={
             "Low Risk 🟢": "green",
             "Medium Risk 🟡": "yellow",
@@ -134,7 +138,7 @@ if not map_view.empty:
     st.plotly_chart(fig_map, use_container_width=True)
 
 # =====================================================
-# 4️⃣ ALERT HISTORY (RISK / SAFE)
+# 🚨 ALERT HISTORY
 # =====================================================
 st.header("🚨 Alert History")
 
@@ -142,11 +146,7 @@ if "alerts" not in st.session_state:
     st.session_state.alerts = []
 
 def generate_alert(probability):
-    if probability > 60:
-        status = "RISK 🔴"
-    else:
-        status = "SAFE 🟢"
-
+    status = "RISK 🔴" if probability > 60 else "SAFE 🟢"
     st.session_state.alerts.append({
         "Time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "Status": status,
@@ -155,11 +155,11 @@ def generate_alert(probability):
 
 generate_alert(prob)
 
-alert_df = pd.DataFrame(st.session_state.alerts)
-st.dataframe(alert_df, use_container_width=True)
+st.dataframe(pd.DataFrame(st.session_state.alerts),
+             use_container_width=True)
 
 # =====================================================
-# 5️⃣ PREVENTION RECOMMENDATION (DETAILED)
+# 🛡️ PREVENTION RECOMMENDATION
 # =====================================================
 st.header("🛡️ Prevention Recommendation")
 
@@ -167,22 +167,21 @@ if prob > 70:
     st.error("⚠️ High Risk Zone")
     st.markdown("""
 **Recommended Actions**
-- Immediate chlorination of water  
-- Issue boil-water advisory  
-- Deploy mobile health units  
-- Conduct bacterial source tracing  
-- Emergency community notification  
-- Increase sampling to daily frequency  
+- Immediate chlorination  
+- Boil-water advisory  
+- Deploy medical teams  
+- Source contamination tracing  
+- Emergency public warning  
 """)
 
 elif prob > 40:
     st.warning("⚠️ Moderate Risk")
     st.markdown("""
 **Preventive Steps**
-- Increase monitoring frequency  
-- Inspect pipelines and storage  
-- Alert local health workers  
-- Community awareness programs  
+- Increase monitoring  
+- Inspect pipelines  
+- Alert health workers  
+- Community awareness  
 """)
 
 else:
@@ -195,21 +194,8 @@ else:
 """)
 
 # =====================================================
-# 6️⃣ EXPANDED DATA TABLE (NORTHEAST + PARAMETERS)
+# 📋 EXPANDED DATA TABLE
 # =====================================================
 st.header("📋 Northeast Water Quality Table")
 
-if not data_view.empty:
-    table_df = data_view.copy()
-    np.random.seed(42)
-
-    table_df["pH"] = np.round(np.random.uniform(6.5, 8.5, len(table_df)), 2)
-    table_df["Temperature"] = np.round(np.random.uniform(24, 32, len(table_df)), 1)
-    table_df["Salinity"] = np.round(np.random.uniform(0.1, 0.9, len(table_df)), 2)
-    table_df["Alkalinity"] = np.round(np.random.uniform(80, 140, len(table_df)), 1)
-    table_df["Dissolved O₂"] = np.round(np.random.uniform(5, 9, len(table_df)), 2)
-    table_df["Bacterial contamination"] = np.random.choice(
-        ["Low", "Moderate", "High"], len(table_df)
-    )
-
-    st.dataframe(table_df, use_container_width=True)
+st.dataframe(data_view, use_container_width=True)
