@@ -1,0 +1,97 @@
+Village,State,Ecoli,Turbidity,Latitude,Longitude,Date,Risk,pH,Temperature,Salinity,Alkalinity,Dissolved O₂,Bacterial contamination
+Ziro,Arunachal Pradesh,Low,3.23,27.147447,93.54935,2026-02-01,Low Risk 🟢,7.69,26.5,0.18,107.6,6.33,High
+Silchar,Assam,Medium,6.82,26.029026,91.73552,2026-02-02,Medium Risk 🟡,6.5,31.9,0.59,116.7,5.03,Low
+Shillong,Meghalaya,High,7.23,25.603964,91.883978,2026-02-03,High Risk 🔴,8.45,24.3,0.17,117.1,6.53,Low
+Bishnupur,Manipur,Low,2.08,24.85759,93.928849,2026-02-04,Low Risk 🟢,6.53,31.4,0.55,103.1,5.06,Moderate
+Champhai,Mizoram,Medium,6.5,23.729322,92.717599,2026-02-05,Medium Risk 🟡,6.85,25.9,0.25,125.3,6.7,Moderate
+Dimapur,Nagaland,High,11.21,25.710832,94.02501,2026-02-06,High Risk 🔴,7.4,26.0,0.84,123.6,6.31,Moderate
+Dharmanagar,Tripura,Low,3.46,23.803333,91.373788,2026-02-07,Low Risk 🟢,7.99,27.4,0.57,137.9,7.43,Low
+Gangtok,Sikkim,Medium,4.05,27.267404,88.546443,2026-02-08,Medium Risk 🟡,7.35,25.9,0.33,80.8,5.8,High
+Ziro,Arunachal Pradesh,High,8.79,27.143403,93.531847,2026-02-09,High Risk 🔴,6.73,30.6,0.6,99.9,5.25,High
+Silchar,Assam,Low,2.73,26.072029,91.736737,2026-02-10,Low Risk 🟢,8.27,26.7,0.2,122.8,8.04,Moderate
+Nongpoh,Meghalaya,Medium,5.57,25.643355,91.899007,2026-02-11,Medium Risk 🟡,7.36,22.3,0.19,81.9,7.55,Low
+Thoubal,Manipur,High,9.7,24.742293,93.916707,2026-02-12,High Risk 🔴,6.91,31.4,0.58,121.7,8.52,Moderate
+Aizawl,Mizoram,Low,2.1,23.667301,92.636879,2026-02-13,Low Risk 🟢,6.94,26.2,0.81,99.5,5.49,Low
+Mokokchung,Nagaland,Medium,5.94,25.765093,94.063541,2026-02-14,Medium Risk 🟡,6.5,25.5,0.34,89.9,7.14,Moderate
+Agartala,Tripura,High,8.22,23.83079,91.263106,2026-02-15,High Risk 🔴,6.84,24.2,0.55,104.2,5.26,Moderate
+Namchi,Sikkim,Low,1.02,27.331409,88.633963,2026-02-16,Low Risk 🟢,8.5,24.7,0.88,104.7,5.13,Low
+Itanagar,Arunachal Pradesh,Medium,5.47,27.05833,93.543183,2026-02-17,Medium Risk 🟡,8.47,24.4,0.64,125.7,5.95,High
+Silchar,Assam,High,10.17,26.078845,91.721169,2026-02-18,High Risk 🔴,7.57,22.9,0.77,99.2,5.75,Low
+Nongpoh,Meghalaya,Low,0.56,25.614543,91.92841,2026-02-19,Low Risk 🟢,7.52,24.3,0.62,90.5,7.76,High
+Thoubal,Manipur,Medium,6.21,24.854034,93.92811,2026-02-20,Medium Risk 🟡,6.92,27.4,0.66,93.7,5.7,Low
+Aizawl,Mizoram,High,11.49,23.658696,92.634896,2026-02-21,High Risk 🔴,8.3,28.3,0.37,101.0,7.9,High
+Dimapur,Nagaland,Low,0.79,25.74478,94.122725,2026-02-22,Low Risk 🟢,6.82,31.0,0.59,80.6,5.41,High
+Agartala,Tripura,Medium,5.65,23.72081,91.245729,2026-02-23,Medium Risk 🟡,7.88,28.5,0.28,122.7,5.95,Low
+Gyalshing,Sikkim,High,9.71,27.33535,88.56929,2026-02-24,High Risk 🔴,7.52,28.4,0.3,115.4,8.92,High
+Tawang,Arunachal Pradesh,Low,1.73,27.164976,93.589503,2026-02-25,Low Risk 🟢,7.79,28.7,0.79,93.8,7.0,High
+Guwahati,Assam,Medium,5.41,26.026977,91.779128,2026-02-26,Medium Risk 🟡,7.06,30.8,0.7,137.2,6.32,Moderate
+Shillong,Meghalaya,High,7.38,25.611567,91.976853,2026-02-27,High Risk 🔴,7.11,23.9,0.31,109.1,6.49,Moderate
+Bishnupur,Manipur,Low,0.75,24.855074,93.968803,2026-02-28,Low Risk 🟢,6.92,28.7,0.39,95.2,6.18,Moderate
+Aizawl,Mizoram,Medium,6.13,23.755787,92.641859,2026-02-01,Medium Risk 🟡,7.61,25.0,0.44,95.4,7.45,Moderate
+Mokokchung,Nagaland,High,10.25,25.700243,94.147727,2026-02-02,High Risk 🔴,7.9,30.0,0.81,100.3,6.5,Moderate
+Dharmanagar,Tripura,Low,1.04,23.827524,91.272504,2026-02-03,Low Risk 🟢,8.46,30.4,0.79,95.0,5.16,High
+Namchi,Sikkim,Medium,6.48,27.305933,88.572264,2026-02-04,Medium Risk 🟡,7.04,31.7,0.47,130.5,5.78,Moderate
+Ziro,Arunachal Pradesh,High,7.66,27.131922,93.542136,2026-02-05,High Risk 🔴,8.44,29.1,0.13,103.9,6.73,Moderate
+Dibrugarh,Assam,Low,0.78,26.060138,91.649493,2026-02-06,Low Risk 🟢,7.36,28.9,0.15,134.9,6.77,Moderate
+Tura,Meghalaya,Medium,4.84,25.634335,91.925632,2026-02-07,Medium Risk 🟡,8.41,29.4,0.54,116.7,6.68,Moderate
+Bishnupur,Manipur,High,7.58,24.841255,93.822303,2026-02-08,High Risk 🔴,6.59,22.4,0.78,122.2,6.9,Moderate
+Lunglei,Mizoram,Low,1.11,23.698659,92.695755,2026-02-09,Low Risk 🟢,7.37,26.0,0.59,118.1,5.18,High
+Dimapur,Nagaland,Medium,6.57,25.720138,94.100502,2026-02-10,Medium Risk 🟡,7.82,23.6,0.16,118.5,5.11,High
+Udaipur,Tripura,High,11.06,23.811739,91.24056,2026-02-11,High Risk 🔴,8.14,28.3,0.76,119.1,5.83,Low
+Gangtok,Sikkim,Low,0.64,27.254334,88.580361,2026-02-12,Low Risk 🟢,7.74,25.4,0.62,103.1,7.73,Moderate
+Tawang,Arunachal Pradesh,Medium,6.08,27.061711,93.599366,2026-02-13,Medium Risk 🟡,7.2,31.4,0.13,105.1,8.87,Moderate
+Guwahati,Assam,High,11.95,26.140098,91.749094,2026-02-14,High Risk 🔴,7.33,25.7,0.72,100.4,8.72,Low
+Shillong,Meghalaya,Low,1.33,25.628775,91.938385,2026-02-15,Low Risk 🟢,7.26,27.3,0.5,103.4,6.19,High
+Imphal,Manipur,Medium,6.54,24.728558,93.973367,2026-02-16,Medium Risk 🟡,7.21,31.6,0.64,109.0,6.97,Low
+Aizawl,Mizoram,High,10.36,23.666914,92.672586,2026-02-17,High Risk 🔴,8.0,29.9,0.73,85.5,6.98,High
+Dimapur,Nagaland,Low,3.61,25.707925,94.090645,2026-02-18,Low Risk 🟢,7.2,23.2,0.21,125.7,7.47,Low
+Udaipur,Tripura,Medium,4.22,23.733457,91.332155,2026-02-19,Medium Risk 🟡,8.14,29.1,0.17,85.1,8.95,Low
+Gangtok,Sikkim,High,11.54,27.360858,88.55787,2026-02-20,High Risk 🔴,7.68,25.5,0.67,108.9,6.51,High
+Ziro,Arunachal Pradesh,Low,2.02,27.059796,93.57284,2026-02-21,Low Risk 🟢,7.01,26.1,0.56,124.5,8.07,High
+Guwahati,Assam,Medium,4.71,26.139074,91.728966,2026-02-22,Medium Risk 🟡,7.3,26.8,0.17,111.7,6.75,Moderate
+Shillong,Meghalaya,High,11.46,25.675181,91.826906,2026-02-23,High Risk 🔴,7.56,31.9,0.16,113.2,8.88,Moderate
+Bishnupur,Manipur,Low,2.09,24.820704,93.93132,2026-02-24,Low Risk 🟢,7.76,27.8,0.82,82.7,6.12,Moderate
+Aizawl,Mizoram,Medium,5.39,23.664381,92.650099,2026-02-25,Medium Risk 🟡,7.21,27.8,0.16,138.5,8.94,Moderate
+Mokokchung,Nagaland,High,11.07,25.705775,94.069524,2026-02-26,High Risk 🔴,7.87,23.6,0.83,129.4,8.8,Low
+Dharmanagar,Tripura,Low,3.57,23.867068,91.23324,2026-02-27,Low Risk 🟢,7.6,23.6,0.43,126.7,6.92,High
+Gangtok,Sikkim,Medium,5.18,27.280278,88.639933,2026-02-28,Medium Risk 🟡,8.16,27.7,0.15,82.2,5.54,Low
+Ziro,Arunachal Pradesh,High,12.0,27.158356,93.650064,2026-02-01,High Risk 🔴,8.49,27.6,0.72,136.7,8.4,Low
+Guwahati,Assam,Low,3.84,26.092087,91.640666,2026-02-02,Low Risk 🟢,7.71,24.3,0.64,117.1,6.43,High
+Tura,Meghalaya,Medium,6.49,25.599706,91.896194,2026-02-03,Medium Risk 🟡,7.12,30.2,0.87,85.3,8.17,Low
+Bishnupur,Manipur,High,10.1,24.724605,93.940822,2026-02-04,High Risk 🔴,7.91,24.1,0.21,80.9,6.4,Moderate
+Lunglei,Mizoram,Low,3.66,23.682759,92.689996,2026-02-05,Low Risk 🟢,7.2,27.1,0.73,103.8,7.49,High
+Kohima,Nagaland,Medium,6.78,25.771923,94.043532,2026-02-06,Medium Risk 🟡,7.48,24.6,0.47,138.8,6.97,Low
+Udaipur,Tripura,High,7.38,23.821344,91.258423,2026-02-07,High Risk 🔴,6.76,23.3,0.22,88.3,7.56,Low
+Gyalshing,Sikkim,Low,3.91,27.359891,88.602438,2026-02-08,Low Risk 🟢,7.7,24.2,0.76,100.7,6.39,Moderate
+Itanagar,Arunachal Pradesh,Medium,5.07,27.107794,93.605508,2026-02-09,Medium Risk 🟡,8.29,23.3,0.36,99.3,5.37,High
+Guwahati,Assam,High,7.78,26.130046,91.701865,2026-02-10,High Risk 🔴,7.25,22.0,0.79,85.1,7.39,High
+Nongpoh,Meghalaya,Low,2.66,25.579276,91.897524,2026-02-11,Low Risk 🟢,7.24,26.6,0.7,82.2,6.01,High
+Bishnupur,Manipur,Medium,5.6,24.863233,93.901868,2026-02-12,Medium Risk 🟡,6.71,26.5,0.53,94.5,6.08,Low
+Lunglei,Mizoram,High,7.45,23.710234,92.754514,2026-02-13,High Risk 🔴,7.57,24.3,0.37,108.4,6.42,Low
+Kohima,Nagaland,Low,3.08,25.696733,94.113472,2026-02-14,Low Risk 🟢,7.62,27.9,0.55,102.7,6.35,Moderate
+Udaipur,Tripura,Medium,4.99,23.759097,91.29972,2026-02-15,Medium Risk 🟡,8.37,22.1,0.28,101.9,6.95,Moderate
+Gyalshing,Sikkim,High,7.28,27.234062,88.648938,2026-02-16,High Risk 🔴,8.18,22.5,0.11,121.8,8.99,Moderate
+Tawang,Arunachal Pradesh,Low,0.52,27.11216,93.666783,2026-02-17,Low Risk 🟢,8.45,26.9,0.68,129.3,7.87,High
+Silchar,Assam,Medium,4.56,26.064797,91.743119,2026-02-18,Medium Risk 🟡,7.15,26.3,0.51,94.5,5.46,Moderate
+Tura,Meghalaya,High,7.77,25.566181,91.912998,2026-02-19,High Risk 🔴,7.46,27.3,0.14,100.2,5.54,High
+Thoubal,Manipur,Low,3.33,24.878394,93.871577,2026-02-20,Low Risk 🟢,7.01,28.8,0.71,115.7,6.89,High
+Champhai,Mizoram,Medium,6.49,23.675819,92.768725,2026-02-21,Medium Risk 🟡,8.43,23.2,0.68,136.3,5.72,High
+Kohima,Nagaland,High,11.21,25.738579,94.111916,2026-02-22,High Risk 🔴,6.78,30.0,0.26,89.8,5.66,Low
+Dharmanagar,Tripura,Low,1.76,23.826432,91.30369,2026-02-23,Low Risk 🟢,8.25,25.9,0.75,106.3,6.51,High
+Gangtok,Sikkim,Medium,5.51,27.26822,88.639618,2026-02-24,Medium Risk 🟡,6.96,31.0,0.41,112.6,8.63,High
+Ziro,Arunachal Pradesh,High,10.14,27.038704,93.670373,2026-02-25,High Risk 🔴,7.17,23.4,0.74,117.2,7.13,High
+Dibrugarh,Assam,Low,1.59,26.146176,91.644268,2026-02-26,Low Risk 🟢,7.0,29.4,0.13,114.2,8.05,High
+Tura,Meghalaya,Medium,4.33,25.574733,91.951401,2026-02-27,Medium Risk 🟡,8.19,23.3,0.42,127.8,5.6,High
+Imphal,Manipur,High,10.47,24.835206,93.922584,2026-02-28,High Risk 🔴,7.59,24.5,0.38,90.9,8.63,Moderate
+Lunglei,Mizoram,Low,3.82,23.684136,92.693921,2026-02-01,Low Risk 🟢,6.81,27.9,0.5,116.7,5.07,High
+Kohima,Nagaland,Medium,4.46,25.7676,94.133158,2026-02-02,Medium Risk 🟡,7.65,28.1,0.44,124.2,8.74,Moderate
+Dharmanagar,Tripura,High,11.92,23.792134,91.238118,2026-02-03,High Risk 🔴,8.18,23.2,0.84,132.2,7.08,High
+Gangtok,Sikkim,Low,1.22,27.280689,88.63908,2026-02-04,Low Risk 🟢,8.08,28.0,0.19,104.9,8.45,Moderate
+Tawang,Arunachal Pradesh,Medium,6.76,27.094512,93.596934,2026-02-05,Medium Risk 🟡,7.67,22.3,0.83,94.9,7.31,Moderate
+Guwahati,Assam,High,9.9,26.166375,91.677983,2026-02-06,High Risk 🔴,7.76,22.1,0.63,90.7,8.84,Low
+Tura,Meghalaya,Low,1.15,25.657701,91.905611,2026-02-07,Low Risk 🟢,7.1,25.1,0.42,105.6,8.2,Moderate
+Thoubal,Manipur,Medium,5.42,24.75051,93.825848,2026-02-08,Medium Risk 🟡,7.63,22.7,0.72,107.2,7.1,Low
+Lunglei,Mizoram,High,7.51,23.699522,92.742457,2026-02-09,High Risk 🔴,7.17,22.8,0.7,96.3,8.59,Moderate
+Kohima,Nagaland,Low,3.01,25.624062,94.044984,2026-02-10,Low Risk 🟢,7.82,22.3,0.28,93.9,7.69,Low
+Udaipur,Tripura,Medium,6.66,23.774283,91.311111,2026-02-11,Medium Risk 🟡,7.61,29.2,0.74,139.3,7.41,Moderate
+Gyalshing,Sikkim,High,7.71,27.374024,88.671106,2026-02-12,High Risk 🔴,7.31,25.2,0.17,118.0,7.94,Low
