@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import numpy as np
 from datetime import datetime
 
 # =====================================================
@@ -11,7 +10,7 @@ st.set_page_config(page_title="AquaGuard Final", layout="wide")
 st.title("💧 AquaGuard – Smart Water Risk & Outbreak Monitoring")
 
 # =====================================================
-# LOAD DATA (UPDATED FILE NAME)
+# LOAD DATA
 # =====================================================
 @st.cache_data
 def load_data():
@@ -27,7 +26,13 @@ if "data" not in st.session_state:
 data = st.session_state.data.copy()
 
 # =====================================================
-# ✅ VERIFY REQUIRED COLUMNS (judge safety)
+# ✅ COLUMN NORMALIZATION (FIXES O₂ ISSUE)
+# =====================================================
+data.columns = data.columns.str.replace("O₂", "O2")
+data.columns = data.columns.str.strip()
+
+# =====================================================
+# ✅ REQUIRED COLUMN CHECK (ROBUST)
 # =====================================================
 required_cols = {
     "Village","State","Latitude","Longitude",
@@ -101,6 +106,7 @@ days = st.slider("Simulation Days", 7, 60, 30)
 base = prob / 100
 growth = [min(100, (base * (1.06 ** i)) * 100) for i in range(days)]
 
+import pandas as pd
 sim_df = pd.DataFrame({
     "Day": range(1, days + 1),
     "Outbreak Risk %": growth
@@ -138,7 +144,7 @@ if not data_view.empty:
     st.plotly_chart(fig_map, use_container_width=True)
 
 # =====================================================
-# 🚨 ALERT HISTORY
+# 🚨 ALERT HISTORY (RISK / SAFE)
 # =====================================================
 st.header("🚨 Alert History")
 
@@ -194,7 +200,7 @@ else:
 """)
 
 # =====================================================
-# 📋 EXPANDED DATA TABLE
+# 📋 DATA TABLE
 # =====================================================
 st.header("📋 Northeast Water Quality Table")
 
